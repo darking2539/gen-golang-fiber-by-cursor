@@ -90,14 +90,36 @@ func seedDefaultUser(gormDB *gorm.DB) {
 	gormDB.Model(&domainUser.User{}).Where("username = ?", "demo").Count(&count)
 	if count == 0 {
 		_ = gormDB.Create(&domainUser.User{
-			Username: "demo",
-			Password: "password",
-			Name:     "Demo User",
-			Email:    "demo@example.com",
-			Avatar:   "https://i.pravatar.cc/150?img=3",
-			Bio:      "Hello, I'm a demo user",
+			Username:  "demo",
+			Password:  "password",
+			Name:      "Demo User",
+			Email:     "demo@example.com",
+			Avatar:    "https://i.pravatar.cc/150?img=3",
+			Bio:       "Hello, I'm a demo user",
+			Title:     "Software Engineer",
+			Location:  "Bangkok, Thailand",
+			Website:   "https://example.com",
+			Followers: 1234,
+			Following: 321,
+			Posts:     42,
 		}).Error
+		return
 	}
+	// Update extended fields if user exists
+	_ = gormDB.Model(&domainUser.User{}).
+		Where("username = ?", "demo").
+		Updates(map[string]interface{}{
+			"name":      "Demo User",
+			"email":     "demo@example.com",
+			"avatar":    "https://i.pravatar.cc/150?img=3",
+			"bio":       "Hello, I'm a demo user",
+			"title":     "Software Engineer",
+			"location":  "Bangkok, Thailand",
+			"website":   "https://example.com",
+			"followers": 1234,
+			"following": 321,
+			"posts":     42,
+		}).Error
 }
 
 func fiberErr(msg string) error { return &fiberError{msg: msg} }
