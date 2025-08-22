@@ -46,3 +46,52 @@ JWT_SECRET=dev-secret go run ./cmd/server
 ## Notes
 - SQLite file: `app.db` (auto-created)
 - Seed user: `demo` / `password`
+
+```mermaid
+erDiagram
+    USERS {
+        INTEGER id PK
+        TEXT username UK
+        TEXT password
+        TEXT name
+        TEXT email
+        TEXT avatar
+        TEXT bio
+        TEXT title
+        TEXT location
+        TEXT website
+        INTEGER followers
+        INTEGER following
+        INTEGER posts
+    }
+```
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant API as HTTP Server (Fiber)
+    participant UC as Usecase (auth/profile)
+    participant Repo as Repository
+    participant DB as SQLite
+
+    C->>API: POST /login (username, password)
+    API->>UC: Authenticate(username, password)
+    UC->>Repo: GetUserByUsername(username)
+    Repo->>DB: SELECT * FROM users WHERE username=?
+    DB-->>Repo: User record
+    UC-->>API: Generate JWT (accessToken)
+    API-->>C: 200 {accessToken}
+
+    C->>API: GET /profile (Authorization: Bearer <jwt>)
+    API->>UC: Validate JWT and get userId
+    UC->>Repo: GetUserByID(userId)
+    Repo->>DB: SELECT ... FROM users WHERE id=?
+    DB-->>Repo: User record
+    UC-->>API: User profile DTO
+    API-->>C: 200 profile JSON
+```
+
+Notes:
+- USERS is the single table used (JWT is stateless, no refresh tokens stored).
+- Column types follow SQLite affinity.
+- `username` is unique; `id` is the primary key.
