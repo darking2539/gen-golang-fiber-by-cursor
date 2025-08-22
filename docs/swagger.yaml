@@ -1,0 +1,106 @@
+basePath: /
+definitions:
+  internal_handler_http.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_handler_http.LoginResponse:
+    properties:
+      accessToken:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API documentation for the Go Fiber Clean Architecture sample.
+  title: Go Fiber Clean Architecture API
+  version: "1.0"
+paths:
+  /hello-world:
+    get:
+      description: Returns hello world message
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Hello world
+      tags:
+      - Hello
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate and get access token
+      parameters:
+      - description: Login request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_http.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler_http.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login
+      tags:
+      - Auth
+  /profile:
+    get:
+      description: Returns the profile of the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get current user's profile
+      tags:
+      - Profile
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    description: 'Use format: Bearer <token>'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

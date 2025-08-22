@@ -15,6 +15,16 @@ func (h *ProfileHandler) Register(r fiber.Router) {
 	r.Get("/profile", h.getProfile)
 }
 
+// getProfile godoc
+// @Summary      Get current user's profile
+// @Description  Returns the profile of the authenticated user
+// @Tags         Profile
+// @Produce      json
+// @Success      200  {object}  map[string]interface{}
+// @Failure      401  {object}  map[string]string
+// @Failure      404  {object}  map[string]string
+// @Security     BearerAuth
+// @Router       /profile [get]
 func (h *ProfileHandler) getProfile(c *fiber.Ctx) error {
 	usernameVal := c.Locals("username")
 	username, _ := usernameVal.(string)

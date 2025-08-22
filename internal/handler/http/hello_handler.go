@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -21,6 +22,13 @@ func (h *HelloHandler) Register(r fiber.Router) {
 	r.Get("/hello-world", h.getHello)
 }
 
+// getHello godoc
+// @Summary      Hello world
+// @Description  Returns hello world message
+// @Tags         Hello
+// @Produce      json
+// @Success      200  {object}  map[string]string
+// @Router       /hello-world [get]
 func (h *HelloHandler) getHello(c *fiber.Ctx) error {
 	msg, err := h.uc.GetHello(c.Context())
 	if err != nil {

@@ -15,17 +15,28 @@ func (h *AuthHandler) Register(r fiber.Router) {
 	r.Post("/login", h.loginHandler)
 }
 
-type loginRequest struct {
+type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type loginResponse struct {
+type LoginResponse struct {
 	AccessToken string `json:"accessToken"`
 }
 
+// loginHandler godoc
+// @Summary      Login
+// @Description  Authenticate and get access token
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        body  body      LoginRequest  true  "Login request"
+// @Success      200   {object}  LoginResponse
+// @Failure      400   {object}  map[string]string
+// @Failure      401   {object}  map[string]string
+// @Router       /login [post]
 func (h *AuthHandler) loginHandler(c *fiber.Ctx) error {
-	var req loginRequest
+	var req LoginRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid body"})
 	}
@@ -33,5 +44,5 @@ func (h *AuthHandler) loginHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid credentials"})
 	}
-	return c.JSON(loginResponse{AccessToken: token})
+	return c.JSON(LoginResponse{AccessToken: token})
 }
